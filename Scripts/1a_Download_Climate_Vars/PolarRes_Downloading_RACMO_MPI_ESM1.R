@@ -1,4 +1,15 @@
-# HPC version
+# ==============================================================================
+# DOWNLOAD THE RAW CLIMATE VARIABLES
+# ==============================================================================
+
+# This script will download the climate data from the PolarRES project for a subset of variables and timeframes
+
+# Designed to be run on a High-Performance Computer with an array of jobs
+
+# The script creates a folder directory from the 'outbase' location that matches the directory on the PolarRES server, saving each .nc file within a given directory
+
+# Since the files to download are quite large, this script takes a couple of hours to run
+
 
 library(arrow)
 library(dplyr)
