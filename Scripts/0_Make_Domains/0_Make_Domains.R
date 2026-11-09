@@ -20,7 +20,7 @@ Ant_extent_grid_100m <- rast(Ant_extent, res = 100, vals = 1)
 writeRaster(Ant_extent_grid_1km, here("Data/Ant_extent_grid_1km.tif"), overwrite =T)
 writeRaster(Ant_extent_grid_10km, here("Data/Ant_extent_grid_10km.tif"), overwrite = T)
 
-# Load the two domains for AntTerrEnv variables:
+# Load the two domains for AntTerrClim variables:
 
 # 1. Antarctic continent, from SCAR Antarctic Digital Database high resolution vector polygons of the Antarctic coastline v7.12 (Gerrish et al., 2026) 
 # NOTE: Downloaded the zipped file and unzipped it manually
