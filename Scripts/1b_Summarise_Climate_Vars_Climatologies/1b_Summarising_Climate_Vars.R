@@ -8,6 +8,8 @@
 
 # Every job is a separate model and variable - specified from the 'models' and 'variables' lists below
 
+# A separate script runs the bioclimatic variables using outputs from this script
+
 # The script creates a folder directory structured as: here("Data/Environmental_predictors/PolarRes26", model) where the monthly climatologies are saved as .tif files
 
 # The outputs are still in their native extent and resolution. The next step will harmonise them to a common grid.
