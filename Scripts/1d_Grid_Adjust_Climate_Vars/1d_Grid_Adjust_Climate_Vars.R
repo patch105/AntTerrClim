@@ -3,7 +3,7 @@
 # HARMONISE THE GRIDS OF THE MONTHLY CLIMATOLOGIES 
 # ==============================================================================
 
-# Takes every climatology written from scripts 1b or 1c (for every model) and produces masked
+# Takes every climatology written from scripts 1b (for every model) and produces masked
 # versions of each, on a common grid:
 #   - <name>_COASTLINE.tif       -- masked to the coastline domain
 #   - <name>_ICEFREE.tif         -- masked to the (historical/mid) ice-free domain
@@ -174,7 +174,7 @@ job_table <- map_dfr(models, function(model) {
 })
 
 if (nrow(job_table) == 0) {
-  stop("No .tif files found under ", input_base, " -- has Script 1b_1c been run yet?")
+  stop("No .tif files found under ", input_base, " -- has Script 1b been run yet?")
 }
 
 message(nrow(job_table), " output file(s) found across ",
@@ -211,7 +211,6 @@ dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 stem <- tools::file_path_sans_ext(filename)
 coastline_path      <- file.path(out_dir, paste0(stem, "_COASTLINE.tif"))
 icefree_path        <- file.path(out_dir, paste0(stem, "_ICEFREE.tif"))
-icefree_futurepath  <- file.path(out_dir, paste0(stem, "_ICEFREE_FUTURE.tif"))
 
 # Sea-ice detection only needs the filename, so it's done here (before any
 # raster is read) -- both to route to the right branch below and to know
@@ -220,18 +219,11 @@ icefree_futurepath  <- file.path(out_dir, paste0(stem, "_ICEFREE_FUTURE.tif"))
 # not just a subset of months.
 is_sea_ice <- grepl("Sea_Ice_Concentration", filename, fixed = TRUE)
 
-# Period is also read off the filename. FUTURE-period files additionally
-# get an ICEFREE_FUTURE output; historical/mid files only get the two
-# generic COASTLINE/ICEFREE outputs. This applies uniformly to every
-# variable, sea ice included.
-is_future <- grepl("_FUTURE_", filename, fixed = TRUE)
 
 # Every output path this job would produce -- used only for the
-# skip-existing check. COASTLINE/ICEFREE are always produced; ICEFREE_FUTURE
-# only for FUTURE-period files; CONCENTRATION/BUFFER/DIST only for sea ice
+# skip-existing check. COASTLINE/ICEFREE are always produced: CONCENTRATION/BUFFER/DIST only for sea ice
 # (instead of the generic set).
 domain_mask_outputs <- c(coastline_path, icefree_path)
-if (is_future) domain_mask_outputs <- c(domain_mask_outputs, icefree_futurepath)
 
 concentration_path <- file.path(out_dir, paste0(stem, "_CONCENTRATION.tif"))
 buffer_paths        <- file.path(out_dir, paste0(stem, "_BUFFER_", sea_ice_buffer_km, "km.tif"))
@@ -361,7 +353,7 @@ stopifnot(
 # Step 2: Reproject into the domain's CRS with bilinear interpolation
 r <- project(r, target_grid, method = "bilinear")
 
-# ---- 5c. Every non-sea-ice variable: generic COASTLINE / ICEFREE / ICEFREE_FUTURE --
+# ---- 5c. Every non-sea-ice variable: generic COASTLINE / ICEFREE / 
 
 if (!is_sea_ice) {
   
@@ -372,12 +364,7 @@ if (!is_sea_ice) {
   r_icefree <- mask(r, ice_free_domain, maskvalue = NA)
   writeRaster(r_icefree, icefree_path, overwrite = TRUE)
   message("  wrote ", icefree_path)
-  
-  if (is_future) {
-    r_icefree_future <- mask(r, ice_free_future_domain, maskvalue = NA)
-    writeRaster(r_icefree_future, icefree_futurepath, overwrite = TRUE)
-    message("  wrote ", icefree_futurepath)
-  }
+
   
   message("Done: ", model, " / ", filename)
   quit(save = "no", status = 0)
@@ -440,8 +427,8 @@ r <- ifel(r_final == -999, NA, r_final)
 
 # ---- 5e. Sea ice only: coast/SG masking, 60S crop, and buffer products ------------
 # Ice-free-land layers DO change by period: historical & mid use the
-# current domain, future uses the projected future domain. Uses the SAME
-# ice_free_domain / ice_free_future_domain objects loaded once in section 1
+# current domain. Uses the SAME
+# ice_free_domain objects loaded once in section 1
 # for every other variable, rather than re-reading separate copies from a
 # different path -- so sea ice and every other variable are guaranteed to
 # be using identical ice-free-land inputs.
