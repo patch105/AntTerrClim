@@ -49,6 +49,7 @@
 # Designed to be run on a High-Performance Computer with an array of jobs
 
 # Every job is a separate input file to be adjusted, so the script must be run on over 1 thousand jobs 
+
 # Check the required number of jobs from the outputs in the "Data/Environmental_predictors/PolarRes26" folder
 
 # The script creates a folder directory structured as: here("Data/Environmental_predictors/PolarRes26", model, "/Regridded") where the grid-adjusted monthly climatologies are saved as .tif files
