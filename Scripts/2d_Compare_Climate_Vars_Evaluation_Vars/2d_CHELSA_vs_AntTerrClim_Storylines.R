@@ -31,7 +31,7 @@
 #
 # 3. Scope boundary (splits ice-free land into Peninsula vs Continent)
 #    Polygon created by the authors.
-#    Data/Peninsula_Continent_Boundary.shp
+#    Available in Data/Peninsula_Continent_Boundary.shp
 #    Scopes plotted: All (ice-free land), Peninsula, Continent
 
 
